@@ -25,22 +25,22 @@ func TestGetNumAlphanumerical(t *testing.T) {
 }
 
 func TestGetPointsRoundAmount(t *testing.T) {
-	value := getPointsRoundAmount(".00")
+	value := getPointsRoundAmount("00")
 	assert.Equal(t, 50, value)
-	value = getPointsRoundAmount(".59")
+	value = getPointsRoundAmount("59")
 	assert.Equal(t, 0, value)
 }
 
 func TestGetPointsMultipleOf25(t *testing.T) {
-	value := getPointsMultipleOf25(".00")
+	value := getPointsMultipleOf25("00")
 	assert.Equal(t, 25, value)
-	value = getPointsMultipleOf25(".25")
+	value = getPointsMultipleOf25("25")
 	assert.Equal(t, 25, value)
-	value = getPointsMultipleOf25(".50")
+	value = getPointsMultipleOf25("50")
 	assert.Equal(t, 25, value)
-	value = getPointsMultipleOf25(".75")
+	value = getPointsMultipleOf25("75")
 	assert.Equal(t, 25, value)
-	value = getPointsMultipleOf25(".99")
+	value = getPointsMultipleOf25("99")
 	assert.Equal(t, 0, value)
 }
 

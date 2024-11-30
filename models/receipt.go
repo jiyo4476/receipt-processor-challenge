@@ -24,7 +24,7 @@ func (r Receipt) Points() int {
 	// One point for every alphanumerical character in the retailer name
 	points += getNumAlphanumerical(r.Retailer)
 
-	cents := r.Total[len(r.Total)-3:]
+	cents := r.Total[len(r.Total)-2:]
 	// 50 points if the total is a round dollar amount with no cents
 	points += getPointsRoundAmount(cents)
 	// 25 points if total is a multiple of .25
@@ -68,14 +68,14 @@ func getNumAlphanumerical(s string) int {
 }
 
 func getPointsRoundAmount(cents string) int {
-	if cents == ".00" {
+	if cents == "00" {
 		return 50
 	}
 	return 0
 }
 
 func getPointsMultipleOf25(cents string) int {
-	if cents == ".00" || cents == ".25" || cents == ".50" || cents == ".75" {
+	if cents == "00" || cents == "25" || cents == "50" || cents == "75" {
 		return 25
 	}
 	return 0
