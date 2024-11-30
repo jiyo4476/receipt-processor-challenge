@@ -15,6 +15,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Integration Tests
+
 func SetUpRouter() *gin.Engine {
 	validate = validator.New(validator.WithRequiredStructEnabled())
 	router := gin.Default()

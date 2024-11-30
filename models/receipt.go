@@ -8,11 +8,11 @@ import (
 )
 
 type Receipt struct {
-	Retailer     string `json:"retailer" binding:"required,correctRetailerName"`
-	PurchaseDate string `json:"purchaseDate" binding:"required" time_format:"2022-01-01"`
-	PurchaseTime string `json:"purchaseTime" binding:"required" time_format:"13:01"`
+	Retailer     string `json:"retailer" binding:"required,correctRetailerName,min=1"`
+	PurchaseDate string `json:"purchaseDate" binding:"required" time_format:"2022-01-01",len=10`
+	PurchaseTime string `json:"purchaseTime" binding:"required" time_format:"13:01,len=5"`
 	Items        []Item `json:"items" binding:"required"`
-	Total        string `json:"total" binding:"required,correctCashValue"`
+	Total        string `json:"total" binding:"required,correctCashValue,min=4"`
 }
 
 type points interface {
