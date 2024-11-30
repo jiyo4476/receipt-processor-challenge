@@ -64,6 +64,14 @@ func TestCorrectShortDescription_ValidLength(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestCorrectShortDescriptionInvalid(t *testing.T) {
+	validate := validator.New()
+	validate.RegisterValidation("correctShortDescription", CorrectShortDescription)
+	input := "Hello@world"
+	err := validate.Var(input, "correctShortDescription")
+	assert.Error(t, err)
+}
+
 func TestCorrectCashValue_ValidCashValue_ValidTen(t *testing.T) {
 	validate := validator.New()
 	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
@@ -143,6 +151,20 @@ func TestCorrectCashValue_InvalidCashValue(t *testing.T) {
 	}
 
 	valid := TestStruct{CashValue: "abc"}
+
+	err := validate.Struct(valid)
+	assert.Error(t, err)
+}
+
+func TestCorrectCashValue_NegitiveCashValue(t *testing.T) {
+	validate := validator.New()
+	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
+
+	type TestStruct struct {
+		CashValue string `validate:"required,correct_cash_value"`
+	}
+
+	valid := TestStruct{CashValue: "-99.99"}
 
 	err := validate.Struct(valid)
 	assert.Error(t, err)

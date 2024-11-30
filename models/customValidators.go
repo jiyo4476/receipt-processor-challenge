@@ -2,6 +2,7 @@ package models
 
 import (
 	"regexp"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -21,8 +22,11 @@ var CorrectCashValue validator.Func = func(fl validator.FieldLevel) bool {
 	value, ok := fl.Field().Interface().(string)
 	if ok {
 		matched, _ := regexp.MatchString("^\\d+\\.\\d{2}$", value)
-		if matched {
-			return true
+		valueAsFloat, err := strconv.ParseFloat(value, 64)
+		if matched && err == nil {
+			if valueAsFloat > 0 {
+				return true
+			}
 		}
 	}
 	return false
