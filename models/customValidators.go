@@ -1,0 +1,40 @@
+package models
+
+import (
+	"regexp"
+
+	"github.com/go-playground/validator/v10"
+)
+
+var CorrectShortDescription validator.Func = func(fl validator.FieldLevel) bool {
+	value, ok := fl.Field().Interface().(string)
+	if ok {
+		matched, _ := regexp.MatchString("^[\\w\\s\\-]+$", value)
+		if matched {
+			return true
+		}
+	}
+	return false
+}
+
+var CorrectCashValue validator.Func = func(fl validator.FieldLevel) bool {
+	value, ok := fl.Field().Interface().(string)
+	if ok {
+		matched, _ := regexp.MatchString("^\\d+\\.\\d{2}$", value)
+		if matched {
+			return true
+		}
+	}
+	return false
+}
+
+var CorrectRetailerName validator.Func = func(fl validator.FieldLevel) bool {
+	value, ok := fl.Field().Interface().(string)
+	if ok {
+		matched, _ := regexp.MatchString("^[\\w\\s\\-&]+$", value)
+		if matched {
+			return true
+		}
+	}
+	return false
+}
