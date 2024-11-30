@@ -64,13 +64,12 @@ func TestCorrectShortDescription_ValidLength(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestCorrectCashValue_ValidCashValue_Ten(t *testing.T) {
-	var validate *validator.Validate
-	validate = validator.New()
+func TestCorrectCashValue_ValidCashValue_ValidTen(t *testing.T) {
+	validate := validator.New()
 	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
 
 	type TestStruct struct {
-		CashValue string `binding:"required,correct_cash_value,min=4"`
+		CashValue string `validate:"required,correct_cash_value"`
 	}
 
 	testData := TestStruct{CashValue: "10.00"}
@@ -80,12 +79,11 @@ func TestCorrectCashValue_ValidCashValue_Ten(t *testing.T) {
 }
 
 func TestCorrectCashValue_ValidCashValue_Change(t *testing.T) {
-	var validate *validator.Validate
-	validate = validator.New()
+	validate := validator.New()
 	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
 
 	type TestStruct struct {
-		CashValue string `binding:"required,correct_cash_value,min=4"`
+		CashValue string `validate:"required,correct_cash_value"`
 	}
 
 	testData := TestStruct{CashValue: "0.99"}
@@ -94,12 +92,11 @@ func TestCorrectCashValue_ValidCashValue_Change(t *testing.T) {
 }
 
 func TestCorrectCashValue_ValidCashValue_Len_06(t *testing.T) {
-	var validate *validator.Validate
-	validate = validator.New()
+	validate := validator.New()
 	validate.RegisterValidation("correctCashValue", CorrectCashValue)
 
 	type TestStruct struct {
-		CashValue string `binding:"required,correctCashValue,min=4"`
+		CashValue string `validate:"required,correctCashValue"`
 	}
 
 	valid := TestStruct{CashValue: "123.45"}
@@ -113,7 +110,7 @@ func TestCorrectCashValue_ValidCashValue(t *testing.T) {
 	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
 
 	type TestStruct struct {
-		CashValue string `binding:"required,correct_cash_value,min=4"`
+		CashValue string `validate:"required,correct_cash_value"`
 	}
 
 	valid := TestStruct{CashValue: "9999.00"}
@@ -124,12 +121,11 @@ func TestCorrectCashValue_ValidCashValue(t *testing.T) {
 }
 
 func TestCorrectCashValue_ValidCashValue_02(t *testing.T) {
-	var validate *validator.Validate
-	validate = validator.New()
+	validate := validator.New()
 	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
 
 	type TestStruct struct {
-		CashValue string `binding:"required,correct_cash_value,min=4"`
+		CashValue string `validate:"required,correct_cash_value"`
 	}
 
 	valid := TestStruct{CashValue: "50.50"}
@@ -138,13 +134,26 @@ func TestCorrectCashValue_ValidCashValue_02(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestCorrectCashValue_InvalidCashValue(t *testing.T) {
+	validate := validator.New()
+	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
+
+	type TestStruct struct {
+		CashValue string `validate:"required,correct_cash_value"`
+	}
+
+	valid := TestStruct{CashValue: "abc"}
+
+	err := validate.Struct(valid)
+	assert.Error(t, err)
+}
+
 func TestCorrectRetailerName_ValidRetailerName(t *testing.T) {
-	var validate *validator.Validate
-	validate = validator.New()
+	validate := validator.New()
 	validate.RegisterValidation("correctRetailerName", CorrectRetailerName)
 
 	type TestStruct struct {
-		RetailerName string `binding:"required,correctRetailerName,min=1"`
+		RetailerName string `validate:"required,correctRetailerName"`
 	}
 
 	valid := TestStruct{RetailerName: "Valid Retailer Name"}
@@ -154,30 +163,14 @@ func TestCorrectRetailerName_ValidRetailerName(t *testing.T) {
 }
 
 func TestCorrectRetailerName_ValidRetailerName_Non_alphanumeric(t *testing.T) {
-	var validate *validator.Validate
-	validate = validator.New()
+	validate := validator.New()
 	validate.RegisterValidation("correctRetailerName", CorrectRetailerName)
 
 	type TestStruct struct {
-		RetailerName string `binding:"required,correctRetailerName,min=1"`
+		RetailerName string `validate:"required,correctRetailerName"`
 	}
 
 	valid := TestStruct{RetailerName: "Target~"}
-
-	err := validate.Struct(valid)
-	assert.NoError(t, err)
-}
-
-func TestCorrectRetailerName_InvalidRetailerName(t *testing.T) {
-	var validate *validator.Validate
-	validate = validator.New()
-	validate.RegisterValidation("correctRetailerName", CorrectRetailerName)
-
-	type TestStruct struct {
-		RetailerName string `binding:"required,correctRetailerName,min=1"`
-	}
-
-	valid := TestStruct{RetailerName: ""}
 
 	err := validate.Struct(valid)
 	assert.Error(t, err)

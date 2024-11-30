@@ -79,19 +79,20 @@ func TestGetPointsForItems(t *testing.T) {
 
 func TestReceiptPoints_SuccessPath(t *testing.T) {
 	receipt := Receipt{
-		Retailer:     "Test Retailer",
+		Retailer:     "Target",
 		PurchaseDate: "2022-01-01",
-		PurchaseTime: "14:30",
+		PurchaseTime: "13:01",
 		Items: []Item{
-			{ShortDescription: "Item 1", Price: "10.00"},
-			{ShortDescription: "Item 2", Price: "20.00"},
-			{ShortDescription: "Item 3", Price: "30.00"},
-			{ShortDescription: "Item 4", Price: "40.00"},
+			{ShortDescription: "Mountain Dew 12PK", Price: "6.49"},
+			{ShortDescription: "Emils Cheese Pizza", Price: "12.25"},
+			{ShortDescription: "Knorr Creamy Chicken", Price: "1.26"},
+			{ShortDescription: "Doritos Nacho Cheese", Price: "3.35"},
+			{ShortDescription: "   Klarbrunn 12-PK 12 FL OZ  ", Price: "12.00"},
 		},
-		Total: "100.00",
+		Total: "01.64",
 	}
 	points := receipt.Points()
-	assert.Equal(t, 100, points)
+	assert.Equal(t, 28, points)
 }
 
 func TestReceiptPointsForTotal25(t *testing.T) {
@@ -103,7 +104,7 @@ func TestReceiptPointsForTotal25(t *testing.T) {
 		Total:        "25.00",
 	}
 	points := receipt.Points()
-	assert.Equal(t, 81, points)
+	assert.Equal(t, 103, points)
 }
 
 func TestReceiptPointsWithFourItems(t *testing.T) {
@@ -129,9 +130,11 @@ func TestPointsForOddPurchaseDate(t *testing.T) {
 		Retailer:     "Test Retailer",
 		PurchaseDate: "2022-01-01",
 		PurchaseTime: "13:01",
-		Items:        []Item{},
-		Total:        "10.00",
+		Items: []Item{
+			{ShortDescription: "Item01", Price: "10.00"},
+		},
+		Total: "10.00",
 	}
 	points := receipt.Points()
-	assert.Equal(t, 56, points)
+	assert.Equal(t, 95, points)
 }

@@ -32,7 +32,7 @@ var CorrectRetailerName validator.Func = func(fl validator.FieldLevel) bool {
 	value, ok := fl.Field().Interface().(string)
 	if ok {
 		matched, _ := regexp.MatchString("^[\\w\\s\\-&]+$", value)
-		if matched {
+		if matched && len(value) > 0 {
 			return true
 		}
 	}
