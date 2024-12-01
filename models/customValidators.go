@@ -22,11 +22,9 @@ var CorrectCashValue validator.Func = func(fl validator.FieldLevel) bool {
 	value, ok := fl.Field().Interface().(string)
 	if ok {
 		matched, _ := regexp.MatchString("^\\d+\\.\\d{2}$", value)
-		valueAsFloat, err := strconv.ParseFloat(value, 64)
-		if matched && err == nil {
-			if valueAsFloat > 0 {
-				return true
-			}
+		valueAsFloat, _ := strconv.ParseFloat(value, 64)
+		if matched && valueAsFloat > 0 {
+			return true
 		}
 	}
 	return false

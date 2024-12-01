@@ -107,36 +107,7 @@ func TestCorrectCashValue_ValidCashValue_Len_06(t *testing.T) {
 		CashValue string `validate:"required,correctCashValue"`
 	}
 
-	valid := TestStruct{CashValue: "123.45"}
-
-	err := validate.Struct(valid)
-	assert.NoError(t, err)
-}
-
-func TestCorrectCashValue_ValidCashValue(t *testing.T) {
-	var validate = validator.New()
-	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
-
-	type TestStruct struct {
-		CashValue string `validate:"required,correct_cash_value"`
-	}
-
-	valid := TestStruct{CashValue: "9999.00"}
-
-	err := validate.Struct(valid)
-
-	assert.NoError(t, err)
-}
-
-func TestCorrectCashValue_ValidCashValue_02(t *testing.T) {
-	validate := validator.New()
-	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
-
-	type TestStruct struct {
-		CashValue string `validate:"required,correct_cash_value"`
-	}
-
-	valid := TestStruct{CashValue: "50.50"}
+	valid := TestStruct{CashValue: "1234.56"}
 
 	err := validate.Struct(valid)
 	assert.NoError(t, err)
@@ -151,6 +122,20 @@ func TestCorrectCashValue_InvalidCashValue(t *testing.T) {
 	}
 
 	valid := TestStruct{CashValue: "abc"}
+
+	err := validate.Struct(valid)
+	assert.Error(t, err)
+}
+
+func TestCorrectCashValue_InvalidCashValue_Cents(t *testing.T) {
+	validate := validator.New()
+	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
+
+	type TestStruct struct {
+		CashValue string `validate:"required,correct_cash_value"`
+	}
+
+	valid := TestStruct{CashValue: "999.001"}
 
 	err := validate.Struct(valid)
 	assert.Error(t, err)

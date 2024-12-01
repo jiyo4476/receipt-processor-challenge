@@ -15,10 +15,6 @@ type Receipt struct {
 	Total        string `json:"total" binding:"required,correctCashValue,min=4"`
 }
 
-type points interface {
-	Points() int
-}
-
 func (r Receipt) Points() int {
 	points := 0
 	// One point for every alphanumerical character in the retailer name
