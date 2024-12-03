@@ -10,11 +10,11 @@ import (
 )
 
 type Receipt struct {
-	Retailer     string `json:"retailer" binding:"required,correctRetailerName,min=1"`
-	PurchaseDate string `json:"purchaseDate" binding:"required,len=10" time_format:"2022-01-01"`
-	PurchaseTime string `json:"purchaseTime" binding:"required,len=5" time_format:"13:01"`
+	Retailer     string `json:"retailer" binding:"required,min=1,correctRetailerName"`
+	PurchaseDate string `json:"purchaseDate" binding:"required,len=10,correctTime" time_format:"2022-01-01"`
+	PurchaseTime string `json:"purchaseTime" binding:"required,len=5,correctDate" time_format:"13:01"`
 	Items        []Item `json:"items" binding:"required,dive"`
-	Total        string `json:"total" binding:"required,correctCashValue,min=4"`
+	Total        string `json:"total" binding:"required,min=4,correctCashValue"`
 }
 
 func (r Receipt) Validate() error {
@@ -39,7 +39,7 @@ func (r Receipt) Validate() error {
 	return nil
 }
 
-func (r Receipt) Points() int64 {
+func (r Receipt) Points() (int64, error) {
 	points := int64(0)
 	// One point for every alphanumerical character in the retailer name
 	points += getNumAlphanumerical(r.Retailer)
@@ -59,7 +59,7 @@ func (r Receipt) Points() int64 {
 	if err != nil {
 		// handle error
 		log.Printf("Validation error: %v", err) // Log the error
-		return -1
+		return -1, err
 	}
 
 	points += itemPoints
@@ -68,7 +68,7 @@ func (r Receipt) Points() int64 {
 	i, err := strconv.Atoi(r.PurchaseDate[len(r.PurchaseDate)-1:])
 	if err != nil {
 		log.Printf("Validation error: %v", err) // Log the error
-		return -1
+		return -1, err
 	}
 
 	points += getPointsForOddDate(i)
@@ -76,7 +76,7 @@ func (r Receipt) Points() int64 {
 	// 10 points if the time of purchase is after 2pm but before 4pm
 	points += getPointsForTimeOfPurchase(r.PurchaseTime[:2])
 
-	return points
+	return points, err
 }
 
 func getNumAlphanumerical(s string) int64 {

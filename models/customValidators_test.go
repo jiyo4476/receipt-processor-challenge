@@ -7,99 +7,39 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCorrectShortDescription_Valid(t *testing.T) {
-	//var validate *validator.Validate
-	var validate = validator.New()
-	validate.RegisterValidation("correctShortDescription", CorrectShortDescription)
-	input := "Valid Description 123"
-	err := validate.Var(input, "correctShortDescription")
-	assert.NoError(t, err)
-}
-
-func TestCorrectShortDescription_ValidShortDescription(t *testing.T) {
+func tryValidateShortDescription(t *testing.T, input string, isValid bool) {
 	validate := validator.New()
-	validate.RegisterValidation("correctShortDescription", CorrectShortDescription)
-
-	input := "This is a valid description"
-	err := validate.Var(input, "correctShortDescription")
-
-	assert.NoError(t, err)
-}
-
-func TestCorrectShortDescription_ValidHyphenatedDescription(t *testing.T) {
-	validate := validator.New()
-	validate.RegisterValidation("correctShortDescription", CorrectShortDescription)
-
-	input := "This-is-a-valid-description"
-	err := validate.Var(input, "correctShortDescription")
-
-	assert.NoError(t, err)
-}
-
-func TestCorrectShortDescription_ValidSingleWord(t *testing.T) {
-	validate := validator.New()
-	validate.RegisterValidation("correctShortDescription", CorrectShortDescription)
-
-	input := "Apple"
-	err := validate.Var(input, "correctShortDescription")
-
-	assert.NoError(t, err)
-}
-
-func TestCorrectShortDescription_ValidShortDescription_02(t *testing.T) {
-	var validate = validator.New()
-	validate.RegisterValidation("correctShortDescription", CorrectShortDescription)
-
-	input := "This-is-a-valid-description"
-	err := validate.Var(input, "correctShortDescription")
-
-	assert.NoError(t, err)
-}
-
-func TestCorrectShortDescription_ValidLength(t *testing.T) {
-	validate := validator.New()
-	validate.RegisterValidation("correctShortDescription", CorrectShortDescription)
-	input := "This is a valid short description that is exactly 50"
-	err := validate.Var(input, "correctShortDescription")
-	assert.NoError(t, err)
-}
-
-func TestCorrectShortDescriptionInvalid(t *testing.T) {
-	validate := validator.New()
-	validate.RegisterValidation("correctShortDescription", CorrectShortDescription)
-	input := "Hello@world"
-	err := validate.Var(input, "correctShortDescription")
+	validate.RegisterValidation("valid_func", CorrectShortDescription)
+	err := validate.Var(input, "valid_func")
+	if isValid {
+		assert.NoError(t, err)
+		return
+	}
 	assert.Error(t, err)
 }
 
-func TestCorrectCashValue_ValidCashValue_ValidTen(t *testing.T) {
-	validate := validator.New()
-	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
-
-	type TestStruct struct {
-		CashValue string `validate:"required,correct_cash_value"`
-	}
-
-	testData := TestStruct{CashValue: "10.00"}
-
-	err := validate.Struct(testData)
-	assert.NoError(t, err)
+func TestCorrectShortDescription_ValidSingleWord(t *testing.T) {
+	tryValidateShortDescription(t, "Valid", true)
 }
 
-func TestCorrectCashValue_ValidCashValue_Change(t *testing.T) {
-	validate := validator.New()
-	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
-
-	type TestStruct struct {
-		CashValue string `validate:"required,correct_cash_value"`
-	}
-
-	testData := TestStruct{CashValue: "0.99"}
-	err := validate.Struct(testData)
-	assert.NoError(t, err)
+func TestCorrectShortDescription_ValidMultiWord(t *testing.T) {
+	tryValidateShortDescription(t, "Valid Description", true)
+	tryValidateShortDescription(t, "This is a valid description", true)
 }
 
-func TestCorrectCashValue_ValidCashValue_Len_06(t *testing.T) {
+func TestCorrectShortDescription_ValidHyphenatedDescription(t *testing.T) {
+	tryValidateShortDescription(t, "This-is-a-valid-description", true)
+}
+
+func TestCorrectShortDescription_ValidLength(t *testing.T) {
+	tryValidateShortDescription(t, "This is a valid short description that is exactly 50", true)
+}
+
+func TestCorrectShortDescriptionInvalid(t *testing.T) {
+	tryValidateShortDescription(t, "Hello@world", false)
+}
+
+func tryValidateCashValue(t *testing.T, input string, isValid bool) {
 	validate := validator.New()
 	validate.RegisterValidation("correctCashValue", CorrectCashValue)
 
@@ -107,78 +47,92 @@ func TestCorrectCashValue_ValidCashValue_Len_06(t *testing.T) {
 		CashValue string `validate:"required,correctCashValue"`
 	}
 
-	valid := TestStruct{CashValue: "1234.56"}
+	valid := TestStruct{CashValue: input}
 
 	err := validate.Struct(valid)
-	assert.NoError(t, err)
-}
-
-func TestCorrectCashValue_InvalidCashValue(t *testing.T) {
-	validate := validator.New()
-	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
-
-	type TestStruct struct {
-		CashValue string `validate:"required,correct_cash_value"`
+	if isValid {
+		assert.NoError(t, err)
+		return
 	}
-
-	valid := TestStruct{CashValue: "abc"}
-
-	err := validate.Struct(valid)
 	assert.Error(t, err)
 }
 
-func TestCorrectCashValue_InvalidCashValue_Cents(t *testing.T) {
-	validate := validator.New()
-	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
-
-	type TestStruct struct {
-		CashValue string `validate:"required,correct_cash_value"`
-	}
-
-	valid := TestStruct{CashValue: "999.001"}
-
-	err := validate.Struct(valid)
-	assert.Error(t, err)
+func TestCorrectCashValue_ValidCashValue_Valid(t *testing.T) {
+	tryValidateCashValue(t, "00.00", true)
+	tryValidateCashValue(t, "99.99", true)
+	tryValidateCashValue(t, "999999.99", true)
 }
 
-func TestCorrectCashValue_NegitiveCashValue(t *testing.T) {
+func TestCorrectCashValue_ValidCashValue_Len(t *testing.T) {
+	tryValidateCashValue(t, "1234.56", true)
+	tryValidateCashValue(t, "12345.67", true)
+	tryValidateCashValue(t, "12345.6755", false)
+}
+
+func TestCorrectCashValue_InvalidChar(t *testing.T) {
+	tryValidateCashValue(t, "abc", false)
+	tryValidateCashValue(t, "%.^?", false)
+	tryValidateCashValue(t, " ", false)
+}
+
+func tryValidateRetailerName(t *testing.T, input string, isValid bool) {
 	validate := validator.New()
-	validate.RegisterValidation("correct_cash_value", CorrectCashValue)
+	validate.RegisterValidation("correctRetailerName", CorrectRetailerName)
 
 	type TestStruct struct {
-		CashValue string `validate:"required,correct_cash_value"`
+		RetailerName string `validate:"required,correctRetailerName"`
 	}
 
-	valid := TestStruct{CashValue: "-99.99"}
+	valid := TestStruct{RetailerName: input}
 
 	err := validate.Struct(valid)
+	if isValid {
+		assert.NoError(t, err)
+		return
+	}
 	assert.Error(t, err)
 }
 
 func TestCorrectRetailerName_ValidRetailerName(t *testing.T) {
-	validate := validator.New()
-	validate.RegisterValidation("correctRetailerName", CorrectRetailerName)
-
-	type TestStruct struct {
-		RetailerName string `validate:"required,correctRetailerName"`
-	}
-
-	valid := TestStruct{RetailerName: "Valid Retailer Name"}
-
-	err := validate.Struct(valid)
-	assert.NoError(t, err)
+	tryValidateRetailerName(t, "Valid Retailer Name", true)
 }
 
-func TestCorrectRetailerName_ValidRetailerName_Non_alphanumeric(t *testing.T) {
+func TestCorrectRetailerName_InvalidRetailerName_Non_alphanumeric(t *testing.T) {
+	tryValidateRetailerName(t, "Valid Retailer Name & Co.", false)
+}
+
+func tryValidateCorrectDate(t *testing.T, input string, isValid bool) {
 	validate := validator.New()
-	validate.RegisterValidation("correctRetailerName", CorrectRetailerName)
+	validate.RegisterValidation("correctDate", CorrectDate)
 
 	type TestStruct struct {
-		RetailerName string `validate:"required,correctRetailerName"`
+		PurchaseDate string `validate:"required,len=10,correctDate" time_format:"2022-01-01"`
 	}
 
-	valid := TestStruct{RetailerName: "Target~"}
+	valid := TestStruct{PurchaseDate: input}
 
 	err := validate.Struct(valid)
+	if isValid {
+		assert.NoError(t, err)
+		return
+	}
 	assert.Error(t, err)
+}
+
+func TestCorrectDateValid_CharRange(t *testing.T) {
+	tryValidateCorrectDate(t, "2022-01-01", true)
+	tryValidateCorrectDate(t, "9999-12-01", true)
+	tryValidateCorrectDate(t, "2022-12-01", true)
+	tryValidateCorrectDate(t, "2022-12-31", true)
+	tryValidateCorrectDate(t, "9999-00-01", false)
+	tryValidateCorrectDate(t, "9999-13-01", false)
+	tryValidateCorrectDate(t, "9999-12-00", false)
+	tryValidateCorrectDate(t, "9999-12-32", false)
+}
+
+func TestCorrectDateInvalid_SectionLen(t *testing.T) {
+	tryValidateCorrectDate(t, "2024-01-01", true)
+	tryValidateCorrectDate(t, "20224-01-01", false)
+	tryValidateCorrectDate(t, "2024-011-01", false)
+	tryValidateCorrectDate(t, "2024-01-011", false)
 }

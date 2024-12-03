@@ -48,7 +48,12 @@ func processReceipt(c *gin.Context) {
 func getReceiptsPoints(c *gin.Context) {
 	receipt, ok := memory_cache[c.Param("id")]
 	if ok {
-		points := receipt.Points()
+		points, err := receipt.Points()
+		if err != nil {
+			log.Printf("Validation error: %v", err) // Log the error
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 		c.JSON(http.StatusOK, gin.H{
 			"points": points,
 		})
@@ -94,6 +99,8 @@ func SetUpRouter() *gin.Engine {
 		v.RegisterValidation("correctRetailerName", models.CorrectRetailerName)
 		v.RegisterValidation("correctShortDescription", models.CorrectShortDescription)
 		v.RegisterValidation("correctCashValue", models.CorrectCashValue)
+		v.RegisterValidation("correctDate", models.CorrectDate)
+		v.RegisterValidation("correctTime", models.CorrectTime)
 	}
 
 	router.POST("/receipts/process", processReceipt)

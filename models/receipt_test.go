@@ -91,7 +91,10 @@ func TestReceiptPoints_SuccessPath(t *testing.T) {
 		},
 		Total: "01.64",
 	}
-	points := receipt.Points()
+	points, err := receipt.Points()
+	if err != nil {
+		t.Fatalf("Error calculating points for receipt: %v", err)
+	}
 	assert.Equal(t, int64(28), points)
 }
 
@@ -105,7 +108,10 @@ func TestReceiptPointsForTotal25(t *testing.T) {
 		},
 		Total: "25.00",
 	}
-	points := receipt.Points()
+	points, err := receipt.Points()
+	if err != nil {
+		t.Fatalf("Error calculating points for receipt: %v", err)
+	}
 	assert.Equal(t, int64(103), points)
 }
 
@@ -123,7 +129,10 @@ func TestReceiptPointsWithFourItems(t *testing.T) {
 		},
 		Total: "35.35",
 	}
-	points := receipt.Points()
+	points, err := receipt.Points()
+	if err != nil {
+		t.Fatalf("Error calculating points for receipt: %v", err)
+	}
 	assert.Equal(t, int64(28), points)
 }
 
@@ -137,6 +146,95 @@ func TestPointsForOddPurchaseDate(t *testing.T) {
 		},
 		Total: "10.00",
 	}
-	points := receipt.Points()
+	points, err := receipt.Points()
+	if err != nil {
+		t.Fatalf("Error calculating points for receipt: %v", err)
+	}
 	assert.Equal(t, int64(95), points)
+}
+
+func TestPointsForInvalidPurchaseDate(t *testing.T) {
+	receipt := Receipt{
+		Retailer:     "Test Retailer",
+		PurchaseDate: "2022-01-0a",
+		PurchaseTime: "13:01",
+		Items: []Item{
+			{ShortDescription: "Item01", Price: "10.00"},
+		},
+		Total: "10.00",
+	}
+	_, err := receipt.Points()
+	assert.Error(t, err)
+}
+
+func TestValidateReceiptTotal(t *testing.T) {
+	receipt := Receipt{
+		Retailer:     "Test Retailer",
+		PurchaseDate: "2022-01-01",
+		PurchaseTime: "13:01",
+		Items: []Item{
+			{ShortDescription: "Item1", Price: "10.00"},
+			{ShortDescription: "Item2", Price: "10.00"},
+		},
+		Total: "20.00",
+	}
+	err := receipt.Validate()
+	assert.Nil(t, err, "Receipt should be valid")
+}
+
+func TestValidateInvalidReceiptTotal(t *testing.T) {
+	receipt := Receipt{
+		Retailer:     "Test Retailer",
+		PurchaseDate: "2022-01-01",
+		PurchaseTime: "13:01",
+		Items: []Item{
+			{ShortDescription: "Item01", Price: "10.00"},
+		},
+		Total: "20.00",
+	}
+	err := receipt.Validate()
+	assert.NotNil(t, err, "Receipt should not be valid")
+}
+
+func TestValidateInvalidTotal(t *testing.T) {
+	receipt := Receipt{
+		Retailer:     "Test Retailer",
+		PurchaseDate: "2022-01-01",
+		PurchaseTime: "13:01",
+		Items: []Item{
+			{ShortDescription: "Item01", Price: "10.00"},
+		},
+		Total: "20.00.00",
+	}
+	err := receipt.Validate()
+	assert.NotNil(t, err, "Receipt should not be valid")
+}
+
+func TestValidateInvalidItemPrice(t *testing.T) {
+	receipt := Receipt{
+		Retailer:     "Test Retailer",
+		PurchaseDate: "2022-01-01",
+		PurchaseTime: "13:01",
+		Items: []Item{
+			{ShortDescription: "Item01", Price: "10.00.00"},
+		},
+		Total: "20.00",
+	}
+	err := receipt.Validate()
+	assert.NotNil(t, err, "Receipt should not be valid")
+}
+
+func TestPointsForInvalidItems(t *testing.T) {
+	receipt := Receipt{
+		Retailer:     "Test Retailer",
+		PurchaseDate: "2022-01-01",
+		PurchaseTime: "13:01",
+		Items: []Item{
+			{ShortDescription: "Item01", Price: "10.00.12"},
+		},
+		Total: "20.00",
+	}
+	points, err := receipt.Points()
+	assert.NotNil(t, err, "Error should be returned")
+	assert.Equal(t, int64(-1), points)
 }
