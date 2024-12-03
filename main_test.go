@@ -117,6 +117,15 @@ func TestProcessReceipt_InvalidReceipt_Total(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, w.Code, "Expected 400 status code for invalid receipt")
 }
 
+func TestProcessReceipt_Invalid_Body(t *testing.T) {
+	w, err := makeRequest("POST", "/receipts/process", nil)
+	if err != nil {
+		t.Fatalf("Error making request: %v", err)
+	}
+
+	assert.Equal(t, http.StatusBadRequest, w.Code, "Expected 400 status code for invalid receipt")
+}
+
 func TestProcessReceipt_InvalidReceipt_No_DateAndTime(t *testing.T) {
 	receipt := models.Receipt{
 		Retailer:     "Target",
@@ -163,6 +172,29 @@ func TestProcessReceipt_InvalidTotal(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, w.Code, "Expected 400 status code for invalid receipt")
 }
 
+func TestProcessReceipt_Invalid_Item_Price(t *testing.T) {
+	receipt := models.Receipt{
+		Retailer:     "Target",
+		PurchaseDate: "2022-01-01",
+		PurchaseTime: "13:01",
+		Items: []models.Item{
+			{ShortDescription: "Mountain Dew 12PK", Price: "6.49.00"},
+			{ShortDescription: "Emils Cheese Pizza", Price: "12.25"},
+			{ShortDescription: "Knorr Creamy Chicken", Price: "1.26"},
+			{ShortDescription: "Doritos Nacho Cheese", Price: "3.35"},
+			{ShortDescription: "   Klarbrunn 12-PK 12 FL OZ  ", Price: "12.00"},
+		},
+		Total: "01.64", // Invalid Total
+	}
+
+	w, err := makeRequest("POST", "/receipts/process", receipt)
+	if err != nil {
+		t.Fatalf("Error making request: %v", err)
+	}
+
+	assert.Equal(t, http.StatusBadRequest, w.Code, "Expected 400 status code for invalid receipt")
+}
+
 func TestGetReceiptsPoints_ValidID_01(t *testing.T) {
 	receipt := models.Receipt{
 		Retailer:     "Target",
@@ -183,7 +215,6 @@ func TestGetReceiptsPoints_ValidID_01(t *testing.T) {
 		t.Fatalf("Error processing receipt: %v", err)
 	}
 	assert.Equal(t, http.StatusOK, w.Code, "Expected status code 200 for POST")
-	fmt.Println(w.Body.String())
 
 	if w.Code == http.StatusOK {
 		var postResponse struct {

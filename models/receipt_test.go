@@ -100,8 +100,10 @@ func TestReceiptPointsForTotal25(t *testing.T) {
 		Retailer:     "Test Retailer",
 		PurchaseDate: "2022-01-01",
 		PurchaseTime: "14:00",
-		Items:        []Item{},
-		Total:        "25.00",
+		Items: []Item{
+			{ShortDescription: "Dew 12PK", Price: "25.00"},
+		},
+		Total: "25.00",
 	}
 	points := receipt.Points()
 	assert.Equal(t, int64(103), points)
