@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+	"log"
 	"math"
 	"strconv"
 	"strings"
@@ -9,14 +11,36 @@ import (
 
 type Receipt struct {
 	Retailer     string `json:"retailer" binding:"required,correctRetailerName,min=1"`
-	PurchaseDate string `json:"purchaseDate" binding:"required" time_format:"2022-01-01",len=10`
-	PurchaseTime string `json:"purchaseTime" binding:"required" time_format:"13:01,len=5"`
-	Items        []Item `json:"items" binding:"required"`
+	PurchaseDate string `json:"purchaseDate" binding:"required,len=10" time_format:"2022-01-01"`
+	PurchaseTime string `json:"purchaseTime" binding:"required,len=5" time_format:"13:01"`
+	Items        []Item `json:"items" binding:"required,dive"`
 	Total        string `json:"total" binding:"required,correctCashValue,min=4"`
 }
 
-func (r Receipt) Points() int {
-	points := 0
+func (r Receipt) Validate() error {
+	total, err := strconv.ParseFloat(r.Total, 64)
+	if err != nil {
+		return fmt.Errorf("invalid total: %w", err)
+	}
+
+	itemsTotal := 0.0
+	for _, item := range r.Items {
+		itemPrice, err := strconv.ParseFloat(item.Price, 64)
+		if err != nil {
+			return fmt.Errorf("invalid item price: %w", err)
+		}
+		itemsTotal += itemPrice
+	}
+
+	if fmt.Sprintf("%.2f", itemsTotal) != fmt.Sprintf("%.2f", total) {
+		return fmt.Errorf("sum of item prices %.2f does not equal total %.2f", itemsTotal, total)
+	}
+
+	return nil
+}
+
+func (r Receipt) Points() int64 {
+	points := int64(0)
 	// One point for every alphanumerical character in the retailer name
 	points += getNumAlphanumerical(r.Retailer)
 
@@ -27,13 +51,14 @@ func (r Receipt) Points() int {
 	points += getPointsMultipleOf25(cents)
 
 	// 5 points for every two items on the receipt
-	points += (len(r.Items) / 2) * 5
+	points += int64((len(r.Items) / 2) * 5)
 
 	// if trimmed length of item description is a multiple of 3, multiply price by
 	// 0.2 and round up to the nearest int. The result is the number of points added
 	itemPoints, err := getPointsForItems(r.Items)
 	if err != nil {
 		// handle error
+		log.Printf("Validation error: %v", err) // Log the error
 		return -1
 	}
 
@@ -42,6 +67,7 @@ func (r Receipt) Points() int {
 	// 6 points in the day in the purchsae date is odd
 	i, err := strconv.Atoi(r.PurchaseDate[len(r.PurchaseDate)-1:])
 	if err != nil {
+		log.Printf("Validation error: %v", err) // Log the error
 		return -1
 	}
 
@@ -53,8 +79,8 @@ func (r Receipt) Points() int {
 	return points
 }
 
-func getNumAlphanumerical(s string) int {
-	count := 0
+func getNumAlphanumerical(s string) int64 {
+	count := int64(0)
 	for _, c := range s {
 		if unicode.IsLetter(c) || unicode.IsNumber(c) {
 			count++
@@ -63,36 +89,36 @@ func getNumAlphanumerical(s string) int {
 	return count
 }
 
-func getPointsRoundAmount(cents string) int {
+func getPointsRoundAmount(cents string) int64 {
 	if cents == "00" {
 		return 50
 	}
 	return 0
 }
 
-func getPointsMultipleOf25(cents string) int {
+func getPointsMultipleOf25(cents string) int64 {
 	if cents == "00" || cents == "25" || cents == "50" || cents == "75" {
 		return 25
 	}
 	return 0
 }
 
-func getPointsForOddDate(day int) int {
+func getPointsForOddDate(day int) int64 {
 	if day%2 == 1 {
 		return 6
 	}
 	return 0
 }
 
-func getPointsForTimeOfPurchase(receiptHour string) int {
+func getPointsForTimeOfPurchase(receiptHour string) int64 {
 	if receiptHour == "14" || receiptHour == "15" {
 		return 10
 	}
 	return 0
 }
 
-func getPointsForItems(items []Item) (int, error) {
-	points := 0
+func getPointsForItems(items []Item) (int64, error) {
+	points := int64(0)
 	for _, curr_item := range items {
 		if len(strings.Trim(curr_item.ShortDescription, " "))%3 == 0 {
 			i, err := strconv.ParseFloat(curr_item.Price, 64)
@@ -101,7 +127,7 @@ func getPointsForItems(items []Item) (int, error) {
 				return -1, err
 			}
 
-			points += int(math.Ceil(i * 0.2))
+			points += int64(math.Ceil(i * 0.2))
 		}
 	}
 	return points, nil

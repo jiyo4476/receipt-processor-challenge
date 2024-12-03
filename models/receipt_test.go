@@ -8,58 +8,58 @@ import (
 
 func TestGetNumAlphanumerical(t *testing.T) {
 	value := getNumAlphanumerical("")
-	assert.Equal(t, 0, value)
+	assert.Equal(t, int64(0), value)
 	value = getNumAlphanumerical("a")
-	assert.Equal(t, 1, value)
+	assert.Equal(t, int64(1), value)
 	value = getNumAlphanumerical("hello123world")
-	assert.Equal(t, 13, value)
+	assert.Equal(t, int64(13), value)
 	value = getNumAlphanumerical("ABCDEF12345")
-	assert.Equal(t, 11, value)
+	assert.Equal(t, int64(11), value)
 	value = getNumAlphanumerical("!@#$%^&*")
-	assert.Equal(t, 0, value)
+	assert.Equal(t, int64(0), value)
 	value = getNumAlphanumerical(" hello world ")
-	assert.Equal(t, 10, value)
+	assert.Equal(t, int64(10), value)
 	value = getNumAlphanumerical("h3110,w0r1d!")
-	assert.Equal(t, 10, value)
+	assert.Equal(t, int64(10), value)
 
 }
 
 func TestGetPointsRoundAmount(t *testing.T) {
 	value := getPointsRoundAmount("00")
-	assert.Equal(t, 50, value)
+	assert.Equal(t, int64(50), value)
 	value = getPointsRoundAmount("59")
-	assert.Equal(t, 0, value)
+	assert.Equal(t, int64(0), value)
 }
 
 func TestGetPointsMultipleOf25(t *testing.T) {
 	value := getPointsMultipleOf25("00")
-	assert.Equal(t, 25, value)
+	assert.Equal(t, int64(25), value)
 	value = getPointsMultipleOf25("25")
-	assert.Equal(t, 25, value)
+	assert.Equal(t, int64(25), value)
 	value = getPointsMultipleOf25("50")
-	assert.Equal(t, 25, value)
+	assert.Equal(t, int64(25), value)
 	value = getPointsMultipleOf25("75")
-	assert.Equal(t, 25, value)
+	assert.Equal(t, int64(25), value)
 	value = getPointsMultipleOf25("99")
-	assert.Equal(t, 0, value)
+	assert.Equal(t, int64(0), value)
 }
 
 func TestGetPointsForOddDate(t *testing.T) {
 	value := getPointsForOddDate(1)
-	assert.Equal(t, 6, value)
+	assert.Equal(t, int64(6), value)
 	value = getPointsForOddDate(2)
-	assert.Equal(t, 0, value)
+	assert.Equal(t, int64(0), value)
 }
 
 func TestGetPointsForTimeOfPurchase(t *testing.T) {
 	value := getPointsForTimeOfPurchase("14")
-	assert.Equal(t, 10, value)
+	assert.Equal(t, int64(10), value)
 	value = getPointsForTimeOfPurchase("15")
-	assert.Equal(t, 10, value)
+	assert.Equal(t, int64(10), value)
 	value = getPointsForTimeOfPurchase("13")
-	assert.Equal(t, 0, value)
+	assert.Equal(t, int64(0), value)
 	value = getPointsForTimeOfPurchase("16")
-	assert.Equal(t, 0, value)
+	assert.Equal(t, int64(0), value)
 }
 
 func TestGetPointsForItems(t *testing.T) {
@@ -74,7 +74,7 @@ func TestGetPointsForItems(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error calculating points for items: %v", err)
 	}
-	assert.Equal(t, 6, value)
+	assert.Equal(t, int64(6), value)
 }
 
 func TestReceiptPoints_SuccessPath(t *testing.T) {
@@ -92,7 +92,7 @@ func TestReceiptPoints_SuccessPath(t *testing.T) {
 		Total: "01.64",
 	}
 	points := receipt.Points()
-	assert.Equal(t, 28, points)
+	assert.Equal(t, int64(28), points)
 }
 
 func TestReceiptPointsForTotal25(t *testing.T) {
@@ -104,7 +104,7 @@ func TestReceiptPointsForTotal25(t *testing.T) {
 		Total:        "25.00",
 	}
 	points := receipt.Points()
-	assert.Equal(t, 103, points)
+	assert.Equal(t, int64(103), points)
 }
 
 func TestReceiptPointsWithFourItems(t *testing.T) {
@@ -122,7 +122,7 @@ func TestReceiptPointsWithFourItems(t *testing.T) {
 		Total: "35.35",
 	}
 	points := receipt.Points()
-	assert.Equal(t, 28, points)
+	assert.Equal(t, int64(28), points)
 }
 
 func TestPointsForOddPurchaseDate(t *testing.T) {
@@ -136,5 +136,5 @@ func TestPointsForOddPurchaseDate(t *testing.T) {
 		Total: "10.00",
 	}
 	points := receipt.Points()
-	assert.Equal(t, 95, points)
+	assert.Equal(t, int64(95), points)
 }
