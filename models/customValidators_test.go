@@ -44,7 +44,7 @@ func tryValidateCashValue(t *testing.T, input string, isValid bool) {
 	validate.RegisterValidation("correctCashValue", CorrectCashValue)
 
 	type TestStruct struct {
-		CashValue string `validate:"required,correctCashValue"`
+		CashValue string `validate:"required,min=4,correctCashValue"`
 	}
 
 	valid := TestStruct{CashValue: input}
@@ -80,7 +80,7 @@ func tryValidateRetailerName(t *testing.T, input string, isValid bool) {
 	validate.RegisterValidation("correctRetailerName", CorrectRetailerName)
 
 	type TestStruct struct {
-		RetailerName string `validate:"required,correctRetailerName"`
+		RetailerName string `validate:"required,min=1,correctRetailerName"`
 	}
 
 	valid := TestStruct{RetailerName: input}
@@ -135,4 +135,37 @@ func TestCorrectDateInvalid_SectionLen(t *testing.T) {
 	tryValidateCorrectDate(t, "20224-01-01", false)
 	tryValidateCorrectDate(t, "2024-011-01", false)
 	tryValidateCorrectDate(t, "2024-01-011", false)
+}
+
+func tryValidateCorrectTime(t *testing.T, input string, isValid bool) {
+	validate := validator.New()
+	validate.RegisterValidation("correctTime", CorrectTime)
+
+	type TestStruct struct {
+		PurchaseTime string `validate:"required,len=5,correctTime" time_format:"2022-01-01"`
+	}
+
+	valid := TestStruct{PurchaseTime: input}
+
+	err := validate.Struct(valid)
+	if isValid {
+		assert.NoError(t, err)
+		return
+	}
+	assert.Error(t, err)
+}
+
+func TestCorrectTime_CharRange(t *testing.T) {
+	tryValidateCorrectTime(t, "00:00", true)
+	tryValidateCorrectTime(t, "24:00", true)
+	tryValidateCorrectTime(t, "23:59", true)
+	tryValidateCorrectTime(t, "25:00", false)
+	tryValidateCorrectTime(t, "23:60", false)
+	tryValidateCorrectTime(t, "30:00", false)
+}
+
+func TestCorrectTime_SectionLen(t *testing.T) {
+	tryValidateCorrectTime(t, "00:00", true)
+	tryValidateCorrectTime(t, "001:00", false)
+	tryValidateCorrectTime(t, "00:001", false)
 }

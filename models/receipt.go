@@ -11,8 +11,8 @@ import (
 
 type Receipt struct {
 	Retailer     string `json:"retailer" binding:"required,min=1,correctRetailerName"`
-	PurchaseDate string `json:"purchaseDate" binding:"required,len=10,correctTime" time_format:"2022-01-01"`
-	PurchaseTime string `json:"purchaseTime" binding:"required,len=5,correctDate" time_format:"13:01"`
+	PurchaseDate string `json:"purchaseDate" binding:"required,len=10,correctDate" time_format:"2022-01-01"`
+	PurchaseTime string `json:"purchaseTime" binding:"required,len=5,correctTime" time_format:"13:01"`
 	Items        []Item `json:"items" binding:"required,dive"`
 	Total        string `json:"total" binding:"required,min=4,correctCashValue"`
 }
