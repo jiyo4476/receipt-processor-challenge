@@ -28,12 +28,6 @@ func processReceipt(c *gin.Context) {
 		return
 	}
 
-	if err := validate.Struct(receipt); err != nil {
-		log.Printf("Validation error: %v", err) // Log the error
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
 	if err := receipt.Validate(); err != nil {
 		log.Printf("Validation error: %v", err) // Log the error
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

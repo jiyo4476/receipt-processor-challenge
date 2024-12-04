@@ -147,6 +147,26 @@ func TestProcessReceipt_InvalidReceipt_Total(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, w.Code, "Expected 400 status code for invalid receipt")
 }
 
+func TestProcessReceipt_InvalidReceipt_ItemTotal(t *testing.T) {
+	receipt := models.Receipt{
+		Retailer:     "Target",
+		PurchaseDate: "2022-12-01",
+		PurchaseTime: "13:01",
+		Items: []models.Item{
+			{ShortDescription: "Mountain Dew 12PK", Price: "6.49"},
+			{ShortDescription: "Emils Cheese Pizza", Price: "12.25"},
+		},
+		Total: "20.74",
+	}
+
+	w, err := makeRequest("POST", "/receipts/process", receipt)
+	if err != nil {
+		t.Fatalf("Error making request: %v", err)
+	}
+
+	assert.Equal(t, http.StatusBadRequest, w.Code, "Expected 400 status code for invalid receipt")
+}
+
 func TestProcessReceipt_Invalid_Body(t *testing.T) {
 	w, err := makeRequest("POST", "/receipts/process", nil)
 	if err != nil {
@@ -341,4 +361,9 @@ func TestGetReceiptsPoints_InvalidID(t *testing.T) {
 	}
 
 	assert.Equal(t, http.StatusNotFound, res.Code, "Expected status code 404 for invalid ID")
+}
+
+func TestLoadConfig(t *testing.T) {
+	docModel := loadConfig()
+	assert.NotNil(t, docModel, "Document model should not be nil")
 }
