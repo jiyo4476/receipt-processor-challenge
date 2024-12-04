@@ -42,12 +42,7 @@ func processReceipt(c *gin.Context) {
 func getReceiptsPoints(c *gin.Context) {
 	receipt, ok := memory_cache[c.Param("id")]
 	if ok {
-		points, err := receipt.Points()
-		if err != nil {
-			log.Printf("Validation error: %v", err) // Log the error
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
+		points, _ := receipt.Points()
 		c.JSON(http.StatusOK, gin.H{
 			"points": points,
 		})
@@ -56,36 +51,33 @@ func getReceiptsPoints(c *gin.Context) {
 	}
 }
 
-func loadConfig() *libopenapi.DocumentModel[v3.Document] {
+func loadConfig(configFile string) (*libopenapi.DocumentModel[v3.Document], error) {
 	// Load config
-	spec, err := os.ReadFile("api.yml")
+	spec, err := os.ReadFile(configFile)
 	if err != nil {
-		panic(fmt.Sprintf("Unable to load config from api.yml: %e", err))
+		return nil, fmt.Errorf("unable to load config from %s: %e", configFile, err)
 	}
 
 	specDocument, err := libopenapi.NewDocument(spec)
-
 	if err != nil {
-		panic(fmt.Sprintf("Failed creating config from api.yml: %e", err))
+		return nil, fmt.Errorf("failed creating config from %s: %e", configFile, err)
 	}
 
 	docModel, errors := specDocument.BuildV3Model()
 
 	if len(errors) > 0 {
 		for i := range errors {
-			fmt.Printf("error: %e\n", errors[i])
+			log.Printf("error: %e\n", errors[i])
 		}
-		panic(fmt.Sprintf("cannot create openApi v3 model from document: %d errors reported", len(errors)))
+		log.Printf("cannot create openApi v3 model from document: %d errors reported", len(errors))
+		return nil, fmt.Errorf("cannot create openApi v3 model from document: %d errors reported", len(errors))
 	}
 
-	return docModel
+	return docModel, nil
 }
 
 // Use a single instance of Validate, it caches struct info
-var validate *validator.Validate
-
 func SetUpRouter() *gin.Engine {
-	validate = validator.New(validator.WithRequiredStructEnabled())
 	router := gin.Default()
 
 	// Register custom validation functions for the test router
@@ -103,7 +95,11 @@ func SetUpRouter() *gin.Engine {
 }
 
 func main() {
-	docModel := loadConfig()
+	docModel, err := loadConfig("api.yml")
+	if err != nil {
+		log.Printf("Error loading config: %v", err) // Log the error
+		return
+	}
 
 	fmt.Printf("Starting %s %s - %s\n\n", docModel.Model.Info.Title, docModel.Model.Info.Version, docModel.Model.Info.Description)
 

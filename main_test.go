@@ -363,7 +363,14 @@ func TestGetReceiptsPoints_InvalidID(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, res.Code, "Expected status code 404 for invalid ID")
 }
 
-func TestLoadConfig(t *testing.T) {
-	docModel := loadConfig()
+func TestLoadConfigValidFile(t *testing.T) {
+	docModel, err := loadConfig("api.yml")
+	assert.NoError(t, err, "Error loading config")
 	assert.NotNil(t, docModel, "Document model should not be nil")
+}
+
+func TestLoadConfigInvalidFile(t *testing.T) {
+	docModel, err := loadConfig("fake.yml")
+	assert.Error(t, err, "Expected Error loading config")
+	assert.Nil(t, docModel, "Document model should not be nil")
 }
