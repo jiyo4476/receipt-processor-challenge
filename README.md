@@ -1,17 +1,14 @@
 # Receipt Processor
 
 A webservice that fulfils the documented API. The API is described below. A formal definition is provided 
-in the [api.yml](./api.yml) file, but the information in this README is sufficient for completion of this challenge. We will use the 
-described API to test your solution.
-
-Provide any instructions required to run your application.
+in the [api.yml](./api.yml) file, but the information in this README is sufficient for completion of this challenge.
 
 Data does not need to persist when your application stops. It is sufficient to store information in memory. There are too many different database solutions, we will not be installing a database on our system when testing your application.
 
 
 ## Running The Solution
 
-To start the web server in the project's root directory
+To start the web server in the project's root directory will start the server on port 8080 by default
 go run .
 
 
