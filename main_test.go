@@ -370,7 +370,25 @@ func TestLoadConfigValidFile(t *testing.T) {
 }
 
 func TestLoadConfigInvalidFile(t *testing.T) {
-	docModel, err := loadConfig("fake.yml")
+	docModel, err := loadConfig("noExist.yml")
 	assert.Error(t, err, "Expected Error loading config")
-	assert.Nil(t, docModel, "Document model should not be nil")
+	assert.Nil(t, docModel, "Document model should be nil")
+}
+
+func TestLoadConfigInvalidFormat(t *testing.T) {
+	docModel, err := loadConfig("invalid.yml")
+	assert.Error(t, err, "Expected Error loading config")
+	assert.Nil(t, docModel, "Document model should be nil")
+}
+
+func TestLoadConfigMalformedV2Model(t *testing.T) {
+	docModel, err := loadConfig("./test/test.yml")
+	assert.Error(t, err, "Expected Error loading config")
+	assert.Nil(t, docModel, "Document model should be nil")
+}
+
+func TestLoadConfigInvalidInvalidV3Model(t *testing.T) {
+	docModel, err := loadConfig("./test/test2.yml")
+	assert.Error(t, err, "Expected Error loading config")
+	assert.Nil(t, docModel, "Document model should be nil")
 }

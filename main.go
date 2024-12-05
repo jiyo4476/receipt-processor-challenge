@@ -55,7 +55,7 @@ func loadConfig(configFile string) (*libopenapi.DocumentModel[v3.Document], erro
 	// Load config
 	spec, err := os.ReadFile(configFile)
 	if err != nil {
-		return nil, fmt.Errorf("unable to load config from %s: %e", configFile, err)
+		return nil, fmt.Errorf("error reading file: %e", err)
 	}
 
 	specDocument, err := libopenapi.NewDocument(spec)
