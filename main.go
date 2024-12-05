@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"regexp"
 
 	"receipt-processor-challenge/models"
 
@@ -39,8 +41,31 @@ func processReceipt(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
+func isIDFormatValid(id string) bool {
+	matched, _ := regexp.MatchString("^\\S+$", id)
+	return matched
+}
+
 func getReceiptsPoints(c *gin.Context) {
-	receipt, ok := memory_cache[c.Param("id")]
+	id, err := url.QueryUnescape(c.Param("id"))
+	if err != nil {
+		log.Printf("Error unescaping URL: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"code": "INVALID_ID", "message": "Invalid receipt id"})
+		return
+	}
+
+	if !isIDFormatValid(id) {
+		c.JSON(http.StatusBadRequest, gin.H{"code": "INVALID_ID", "message": "Invalid receipt id"})
+		return
+	}
+
+	_, err = uuid.Parse(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": "INVALID_ID", "message": "Invalid receipt id"})
+		return
+	}
+
+	receipt, ok := memory_cache[id]
 	if ok {
 		points, _ := receipt.Points()
 		c.JSON(http.StatusOK, gin.H{
@@ -94,16 +119,17 @@ func SetUpRouter() *gin.Engine {
 	return router
 }
 
+var Spec *libopenapi.DocumentModel[v3.Document]
+
 func main() {
-	docModel, err := loadConfig("api.yml")
+	// Load specs in globally accessible variable
+	Spec, err := loadConfig("api.yml")
 	if err != nil {
 		log.Printf("Error loading config: %v", err) // Log the error
 		return
 	}
 
-	fmt.Printf("Starting %s %s - %s\n\n", docModel.Model.Info.Title, docModel.Model.Info.Version, docModel.Model.Info.Description)
-
+	fmt.Printf("Starting %s %s - %s\n\n", Spec.Model.Info.Title, Spec.Model.Info.Version, Spec.Model.Info.Description)
 	router := SetUpRouter()
-
 	router.Run()
 }

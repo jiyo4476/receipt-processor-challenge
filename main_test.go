@@ -45,7 +45,7 @@ func attemptProcessReceipt(t *testing.T, receipt models.Receipt) (string, error)
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err, "Error in unmarshaling JSON response")
 	if err != nil {
-		return "", fmt.Errorf("error unmarshalling JSON response: %w", err)
+		return "", fmt.Errorf("error unmarshaling JSON response: %w", err)
 	}
 
 	assert.NotEmpty(t, response.ID, "Response should contain a non-empty ID")
@@ -57,7 +57,7 @@ func attemptGetPoints(t *testing.T, id string) (int64, error) {
 	w, err := makeRequest("GET", endpoint, nil)
 	assert.NoError(t, err, "error making request")
 	if err != nil {
-		return 0, fmt.Errorf("error making GET request: %w", err)
+		return -1, fmt.Errorf("error making GET request: %w", err)
 	}
 
 	var pointsResponse struct {
@@ -66,9 +66,39 @@ func attemptGetPoints(t *testing.T, id string) (int64, error) {
 	err = json.Unmarshal(w.Body.Bytes(), &pointsResponse)
 	assert.NoError(t, err, "Error in unmarshaling JSON response")
 	if err != nil {
-		return 0, fmt.Errorf("error unmarshalling JSON response: %w", err)
+		return -1, fmt.Errorf("error unmarshaling JSON response: %w", err)
 	}
 	return int64(pointsResponse.Points), nil
+}
+
+func TestGetReceiptsPoints_NotFound(t *testing.T) {
+	// Try to fetch points with an invalid ID
+	endpoint := "/receipts/adb6b560-0eef-42bc-9d16-df48f30e89b2/points"
+	res, err := makeRequest("GET", endpoint, nil)
+	if err != nil {
+		t.Fatalf("Error making GET request: %v", err)
+	}
+
+	assert.Equal(t, http.StatusNotFound, res.Code, "Expected status code 404 for Not Found")
+}
+
+// Test Invalid
+func TestGetReceiptsPoints_InvalidUUID_Hyphen(t *testing.T) {
+	endpoint := fmt.Sprintf("/receipts/%s/points", "0000000--0000-0000-0000-000000000000")
+	w, err := makeRequest("GET", endpoint, nil)
+	assert.Equal(t, http.StatusBadRequest, w.Code, "Expected 400 status code for id")
+	if err != nil {
+		t.Fatalf("Error making request: %v", err)
+	}
+}
+
+func TestGetReceiptsPoints_InvalidUUID_Whitespace(t *testing.T) {
+	endpoint := fmt.Sprintf("/receipts/%s/points", "0000000%20-0000-0000-0000-000000000000")
+	w, err := makeRequest("GET", endpoint, nil)
+	assert.Equal(t, http.StatusBadRequest, w.Code, "Expected 400 status code for id")
+	if err != nil {
+		t.Fatalf("Error making request: %v", err)
+	}
 }
 
 func TestProcessReceipt_ValidReceipt(t *testing.T) {
@@ -350,17 +380,6 @@ func TestGetReceiptsPoints_ValidID_04(t *testing.T) {
 		t.Fatalf("Error getting points: %v", err)
 	}
 	assert.Equal(t, int64(31), points, "Expected 31 points for this receipt")
-}
-
-func TestGetReceiptsPoints_InvalidID(t *testing.T) {
-	// Try to fetch points with an invalid ID
-	endpoint := "/receipts/invalid-id/points"
-	res, err := makeRequest("GET", endpoint, nil)
-	if err != nil {
-		t.Fatalf("Error making GET request: %v", err)
-	}
-
-	assert.Equal(t, http.StatusNotFound, res.Code, "Expected status code 404 for invalid ID")
 }
 
 func TestLoadConfigValidFile(t *testing.T) {
