@@ -1,4 +1,4 @@
-package main
+package spec
 
 import (
 	"fmt"
@@ -34,7 +34,7 @@ func loadSpec(specFile string) (*libopenapi.DocumentModel[v3.Document], error) {
 	return docModel, nil
 }
 
-func printSpec(specFile string) error {
+func PrintSpec(specFile string) error {
 	spec, err := loadSpec(specFile)
 	if err != nil {
 		log.Printf("Error loading spec: %v", err) // Log the error

@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"receipt-processor-challenge/models"
+	"receipt-processor-challenge/spec"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -30,7 +31,7 @@ func SetUpRouter() *gin.Engine {
 
 func main() {
 	// Load specs in globally accessible variable
-	if err := printSpec("api.yml"); err != nil {
+	if err := spec.PrintSpec("api.yml"); err != nil {
 		log.Printf("Error loading spec: %v", err) // Log the error
 		return
 	}

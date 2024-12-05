@@ -1,4 +1,4 @@
-package main
+package spec
 
 import (
 	"testing"
@@ -37,11 +37,11 @@ func TestLoadConfigValidFile(t *testing.T) {
 }
 
 func TestPrintSpecValid(t *testing.T) {
-	err := printSpec("api.yml")
+	err := PrintSpec("api.yml")
 	assert.NoError(t, err, "Error loading spec")
 }
 
 func TestPrintSpecInvalid(t *testing.T) {
-	err := printSpec("NoExist.yml")
+	err := PrintSpec("NoExist.yml")
 	assert.Error(t, err, "Error loading spec")
 }
