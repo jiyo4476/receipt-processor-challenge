@@ -9,7 +9,9 @@ Data does not need to persist when your application stops. It is sufficient to s
 ## Running The Solution
 
 To start the api server run the following command in the project's root directory.
+
 Command:
+
 ```
 go run .
 ```
