@@ -5,10 +5,35 @@ in the [api.yml](./api.yml) file, but the information in this README is sufficie
 
 Data does not need to persist when your application stops. It is sufficient to store information in memory. There are too many different database solutions, we will not be installing a database on our system when testing your application.
 
+## Configuration
+
+PORT: Port number used for the server. (Default 8080)
+
+example:
+
+```
+export PORT=8080
+```
+
+To Set Production Mode:
+
+```
+export GIN_MODE=release
+```
+
 
 ## Running The Solution
 
-To start the api server run the following command in the project's root directory.
+To build and run the api server run the following command in the project's root directory.
+
+Command:
+
+```
+go build ./
+./receipt_processor_challenge.exe
+```
+
+To start the api server without building the project run following command in the project's root directory.
 
 Command:
 
@@ -16,7 +41,7 @@ Command:
 go run .
 ```
 
-Will start the server on port 8080 by default
+Will start the server on port 8080 by default if no PORT was defined in Enviernment
 
 
 ---
