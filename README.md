@@ -8,10 +8,13 @@ Data does not need to persist when your application stops. It is sufficient to s
 
 ## Running The Solution
 
-To start the web server in the project's root directory will start the server on port 8080 by default
+To start the api server run the following command in the project's root directory.
+Command:
 ```
 go run .
 ```
+
+will start the server on port 8080 by default
 
 
 ---
