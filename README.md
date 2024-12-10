@@ -16,7 +16,7 @@ Command:
 go run .
 ```
 
-will start the server on port 8080 by default
+Will start the server on port 8080 by default
 
 
 ---

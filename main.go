@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"receipt-processor-challenge/models"
-	"receipt-processor-challenge/spec"
+	"github.com/jiyo4476/receipt-processor-challenge/models"
+	"github.com/jiyo4476/receipt-processor-challenge/spec"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

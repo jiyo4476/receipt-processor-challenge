@@ -4,7 +4,8 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"receipt-processor-challenge/models"
+
+	"github.com/jiyo4476/receipt-processor-challenge/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"receipt-processor-challenge/models"
 	"regexp"
 	"testing"
+
+	"github.com/jiyo4476/receipt-processor-challenge/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
