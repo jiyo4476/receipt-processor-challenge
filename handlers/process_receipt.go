@@ -10,9 +10,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// Map for in-memory data storage
-var memory_cache = make(map[string]models.Receipt)
-
 // Returns an ID for the receipt
 func ProcessReceipt(c *gin.Context) {
 	var receipt models.Receipt
