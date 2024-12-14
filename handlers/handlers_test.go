@@ -1,4 +1,4 @@
-package main
+package handlers_test
 
 import (
 	"bytes"
@@ -10,13 +10,14 @@ import (
 	"testing"
 
 	"github.com/jiyo4476/receipt-processor-challenge/models"
+	"github.com/jiyo4476/receipt-processor-challenge/router"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
 
 func makeRequest(method string, url string, body interface{}) (*httptest.ResponseRecorder, error) {
-	router := SetUpRouter()
+	test_router := router.SetUpRouter()
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request = httptest.NewRequest(method, url, nil)
@@ -29,7 +30,7 @@ func makeRequest(method string, url string, body interface{}) (*httptest.Respons
 		c.Request = httptest.NewRequest(method, "http://localhost:8080"+url, buf)
 		c.Request.Header.Set("Content-Type", "application/json")
 	}
-	router.ServeHTTP(w, c.Request)
+	test_router.ServeHTTP(w, c.Request)
 	return w, nil
 }
 
