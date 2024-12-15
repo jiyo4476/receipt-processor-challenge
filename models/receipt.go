@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"regexp"
 	"strconv"
@@ -62,8 +61,7 @@ func (r Receipt) Points() (int64, error) {
 	// 0.2 and round up to the nearest int. The result is the number of points added
 	itemPoints, err := getPointsForItems(r.Items)
 	if err != nil {
-		// handle error
-		log.Printf("Error calculating points for items: %v", err)
+		// return error
 		return -1, err
 	}
 

@@ -15,7 +15,7 @@ func GetReceiptsPoints(c *gin.Context) {
 	var receipt_id Receipt_id
 	if err := c.ShouldBindUri(&receipt_id); err != nil {
 		log.Printf("Error binding URL: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"code": "error", "message": "No receipt found for that id"})
+		c.JSON(http.StatusNotFound, gin.H{"code": "error", "message": err.Error()})
 		return
 	}
 

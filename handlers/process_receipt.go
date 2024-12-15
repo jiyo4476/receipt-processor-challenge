@@ -17,7 +17,7 @@ func ProcessReceipt(c *gin.Context) {
 		log.Printf("Error binding JSON: %v", err) // Log the error
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Validation Error",
-			"message": "The receipt is invalid",
+			"message": err.Error(),
 		})
 		return
 	}
@@ -26,7 +26,7 @@ func ProcessReceipt(c *gin.Context) {
 		log.Printf("Mismatching Receipt and Item Total: %v", err) // Log the error
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Validation Error",
-			"message": "The receipt is invalid",
+			"message": "The receipt total does not match the sum of the item totals",
 		})
 		return
 	}
