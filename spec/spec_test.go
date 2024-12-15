@@ -13,31 +13,31 @@ func TestLoadConfigInvalidFile(t *testing.T) {
 }
 
 func TestLoadConfigInvalidFormat(t *testing.T) {
-	docModel, err := loadSpec("./test/spec/invalid.yml")
+	docModel, err := loadSpec("../test/spec/invalid.yml")
 	assert.Error(t, err, "Expected Error loading spec")
 	assert.Nil(t, docModel, "Document model should be nil")
 }
 
 func TestLoadConfigMalformedV2Model(t *testing.T) {
-	docModel, err := loadSpec("./test/spec/test.yml")
+	docModel, err := loadSpec("../test/spec/test.yml")
 	assert.Error(t, err, "Expected Error loading spec")
 	assert.Nil(t, docModel, "Document model should be nil")
 }
 
 func TestLoadConfigInvalidInvalidV3Model(t *testing.T) {
-	docModel, err := loadSpec("./test/spec/test2.yml")
+	docModel, err := loadSpec("../test/spec/test2.yml")
 	assert.Error(t, err, "Expected Error loading spec")
 	assert.Nil(t, docModel, "Document model should be nil")
 }
 
 func TestLoadConfigValidFile(t *testing.T) {
-	docModel, err := loadSpec("api.yml")
+	docModel, err := loadSpec("../api.yml")
 	assert.NoError(t, err, "Error loading config")
 	assert.NotNil(t, docModel, "Document model should not be nil")
 }
 
 func TestPrintSpecValid(t *testing.T) {
-	err := PrintSpec("api.yml")
+	err := PrintSpec("../api.yml")
 	assert.NoError(t, err, "Error loading spec")
 }
 
