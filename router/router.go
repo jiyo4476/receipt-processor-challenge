@@ -17,8 +17,7 @@ func SetUpRouter() *gin.Engine {
 	router := gin.New()
 	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 		// Custom format
-		return fmt.Sprintf("[receipt-processor-server] %s - [%s] \"%s%s\033[0m %s %s %s%d\033[0m %s \"%s\" %s\"\n",
-			param.ClientIP,
+		return fmt.Sprintf("[%s] \"%s%s\033[0m %s %s %s%d\033[0m %s \"%s\" %s\"\n",
 			param.TimeStamp.Format(time.RFC1123),
 			param.MethodColor(),
 			param.Method,
