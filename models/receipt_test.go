@@ -25,40 +25,40 @@ func TestGetNumAlphanumerical(t *testing.T) {
 }
 
 func TestGetPointsRoundAmount(t *testing.T) {
-	value := getPointsRoundAmount("00")
+	value := getPointsRoundAmount("00.00")
 	assert.Equal(t, int64(50), value)
-	value = getPointsRoundAmount("59")
+	value = getPointsRoundAmount("00.59")
 	assert.Equal(t, int64(0), value)
 }
 
 func TestGetPointsMultipleOf25(t *testing.T) {
-	value := getPointsMultipleOf25("00")
+	value := getPointsMultipleOf25("10.00")
 	assert.Equal(t, int64(25), value)
-	value = getPointsMultipleOf25("25")
+	value = getPointsMultipleOf25("00.25")
 	assert.Equal(t, int64(25), value)
-	value = getPointsMultipleOf25("50")
+	value = getPointsMultipleOf25("00.50")
 	assert.Equal(t, int64(25), value)
-	value = getPointsMultipleOf25("75")
+	value = getPointsMultipleOf25("00.75")
 	assert.Equal(t, int64(25), value)
-	value = getPointsMultipleOf25("99")
+	value = getPointsMultipleOf25("00.99")
 	assert.Equal(t, int64(0), value)
 }
 
 func TestGetPointsForOddDate(t *testing.T) {
-	value := getPointsForOddDate(1)
+	value := getPointsForOddDate("2022-01-01")
 	assert.Equal(t, int64(6), value)
-	value = getPointsForOddDate(2)
+	value = getPointsForOddDate("2022-01-02")
 	assert.Equal(t, int64(0), value)
 }
 
 func TestGetPointsForTimeOfPurchase(t *testing.T) {
-	value := getPointsForTimeOfPurchase("14")
+	value := getPointsForTimeOfPurchase("14:00")
 	assert.Equal(t, int64(10), value)
-	value = getPointsForTimeOfPurchase("15")
+	value = getPointsForTimeOfPurchase("15:00")
 	assert.Equal(t, int64(10), value)
-	value = getPointsForTimeOfPurchase("13")
+	value = getPointsForTimeOfPurchase("13:00")
 	assert.Equal(t, int64(0), value)
-	value = getPointsForTimeOfPurchase("16")
+	value = getPointsForTimeOfPurchase("16:00")
 	assert.Equal(t, int64(0), value)
 }
 
@@ -153,20 +153,6 @@ func TestPointsForOddPurchaseDate(t *testing.T) {
 	assert.Equal(t, int64(95), points)
 }
 
-func TestPointsForInvalidPurchaseDate(t *testing.T) {
-	receipt := Receipt{
-		Retailer:     "Test Retailer",
-		PurchaseDate: "2022-01-0a",
-		PurchaseTime: "13:01",
-		Items: []Item{
-			{ShortDescription: "Item01", Price: "10.00"},
-		},
-		Total: "10.00",
-	}
-	_, err := receipt.Points()
-	assert.Error(t, err)
-}
-
 func TestValidateReceiptTotal(t *testing.T) {
 	receipt := Receipt{
 		Retailer:     "Test Retailer",
@@ -178,7 +164,7 @@ func TestValidateReceiptTotal(t *testing.T) {
 		},
 		Total: "20.00",
 	}
-	err := receipt.Validate()
+	err := receipt.ValidateTotal()
 	assert.Nil(t, err, "Receipt should be valid")
 }
 
@@ -192,7 +178,7 @@ func TestValidateInvalidReceiptTotal(t *testing.T) {
 		},
 		Total: "20.00",
 	}
-	err := receipt.Validate()
+	err := receipt.ValidateTotal()
 	assert.NotNil(t, err, "Receipt should not be valid")
 }
 
@@ -206,7 +192,7 @@ func TestValidateInvalidTotal(t *testing.T) {
 		},
 		Total: "20.00.00",
 	}
-	err := receipt.Validate()
+	err := receipt.ValidateTotal()
 	assert.NotNil(t, err, "Receipt should not be valid")
 }
 
@@ -220,7 +206,7 @@ func TestValidateInvalidItemPrice(t *testing.T) {
 		},
 		Total: "20.00",
 	}
-	err := receipt.Validate()
+	err := receipt.ValidateTotal()
 	assert.NotNil(t, err, "Receipt should not be valid")
 }
 

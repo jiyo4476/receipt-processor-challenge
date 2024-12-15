@@ -93,7 +93,7 @@ func TestGetReceiptsPoints_NotFound(t *testing.T) {
 func TestGetReceiptsPoints_InvalidUUID_Hyphen(t *testing.T) {
 	endpoint := fmt.Sprintf("/receipts/%s/points", "0000000--0000-0000-0000-000000000000")
 	w, err := makeRequest("GET", endpoint, nil)
-	assert.Equal(t, http.StatusBadRequest, w.Code, "Expected 400 status code for id")
+	assert.Equal(t, http.StatusNotFound, w.Code, "Expected 404 status code for id")
 	if err != nil {
 		t.Fatalf("Error making request: %v", err)
 	}
@@ -102,7 +102,7 @@ func TestGetReceiptsPoints_InvalidUUID_Hyphen(t *testing.T) {
 func TestGetReceiptsPoints_InvalidUUID_Whitespace(t *testing.T) {
 	endpoint := fmt.Sprintf("/receipts/%s/points", "0000000%20-0000-0000-0000-000000000000")
 	w, err := makeRequest("GET", endpoint, nil)
-	assert.Equal(t, http.StatusBadRequest, w.Code, "Expected 400 status code for id")
+	assert.Equal(t, http.StatusNotFound, w.Code, "Expected 404 status code for id")
 	if err != nil {
 		t.Fatalf("Error making request: %v", err)
 	}

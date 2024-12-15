@@ -35,8 +35,15 @@ func TestCorrectShortDescription_ValidLength(t *testing.T) {
 	tryValidateShortDescription(t, "This is a valid short description that is exactly 50", true)
 }
 
-func TestCorrectShortDescriptionInvalid(t *testing.T) {
+func TestCorrectShortDescription_Invalid(t *testing.T) {
 	tryValidateShortDescription(t, "Hello@world", false)
+}
+
+func TestCorrectShortDescription_InvalidType(t *testing.T) {
+	validate := validator.New()
+	validate.RegisterValidation("valid_func", CorrectShortDescription)
+	err := validate.Var(123, "valid_func")
+	assert.Error(t, err)
 }
 
 func tryValidateCashValue(t *testing.T, input string, isValid bool) {
@@ -75,6 +82,20 @@ func TestCorrectCashValue_InvalidChar(t *testing.T) {
 	tryValidateCashValue(t, " ", false)
 }
 
+func TestCorrectCashValue_InvalidType(t *testing.T) {
+	validate := validator.New()
+	validate.RegisterValidation("correctCashValue", CorrectCashValue)
+
+	type TestStruct struct {
+		CashValue int64 `validate:"required,min=4,correctCashValue"`
+	}
+
+	instance := TestStruct{CashValue: int64(1234)}
+
+	err := validate.Struct(instance)
+	assert.Error(t, err)
+}
+
 func tryValidateRetailerName(t *testing.T, input string, isValid bool) {
 	validate := validator.New()
 	validate.RegisterValidation("correctRetailerName", CorrectRetailerName)
@@ -90,6 +111,20 @@ func tryValidateRetailerName(t *testing.T, input string, isValid bool) {
 		assert.NoError(t, err)
 		return
 	}
+	assert.Error(t, err)
+}
+
+func TestCorrectRetailerName_InvalidType(t *testing.T) {
+	validate := validator.New()
+	validate.RegisterValidation("correctRetailerName", CorrectRetailerName)
+
+	type TestStruct struct {
+		RetailerName int `validate:"required,min=1,correctRetailerName"`
+	}
+
+	instance := TestStruct{RetailerName: 1234}
+
+	err := validate.Struct(instance)
 	assert.Error(t, err)
 }
 
@@ -116,6 +151,20 @@ func tryValidateCorrectDate(t *testing.T, input string, isValid bool) {
 		assert.NoError(t, err)
 		return
 	}
+	assert.Error(t, err)
+}
+
+func TestCorrectDateInvalid_Type(t *testing.T) {
+	validate := validator.New()
+	validate.RegisterValidation("correctDate", CorrectDate)
+
+	type TestStruct struct {
+		PurchaseDate int `validate:"required,len=10,correctDate" time_format:"2022-01-01"`
+	}
+
+	valid := TestStruct{PurchaseDate: 1234567899}
+
+	err := validate.Struct(valid)
 	assert.Error(t, err)
 }
 
@@ -152,6 +201,20 @@ func tryValidateCorrectTime(t *testing.T, input string, isValid bool) {
 		assert.NoError(t, err)
 		return
 	}
+	assert.Error(t, err)
+}
+
+func TestCorrectTimeInvalid_Type(t *testing.T) {
+	validate := validator.New()
+	validate.RegisterValidation("correctTime", CorrectTime)
+
+	type TestStruct struct {
+		PurchaseTime int `validate:"required,len=5,correctTime" time_format:"2022-01-01"`
+	}
+
+	valid := TestStruct{PurchaseTime: 1234}
+
+	err := validate.Struct(valid)
 	assert.Error(t, err)
 }
 
