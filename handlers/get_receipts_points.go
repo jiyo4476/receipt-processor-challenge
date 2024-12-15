@@ -6,20 +6,23 @@ import (
 	"net/url"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
+type Receipt_id struct {
+	ID string `uri:"id" binding:"required,uuid"`
+}
+
 func GetReceiptsPoints(c *gin.Context) {
-	id, err := url.QueryUnescape(c.Param("id"))
-	if err != nil {
-		log.Printf("Error unescaping URL: %v", err)
+	var receipt_id Receipt_id
+	if err := c.ShouldBindUri(&receipt_id); err != nil {
+		log.Printf("Error binding URL: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"code": "error", "message": "Invalid receipt id"})
 		return
 	}
 
-	_, err = uuid.Parse(id)
+	id, err := url.QueryUnescape(c.Param("id"))
 	if err != nil {
-		log.Printf("Error Parsing ID: %v", err)
+		log.Printf("Error unescaping URL: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"code": "error", "message": "Invalid receipt id"})
 		return
 	}

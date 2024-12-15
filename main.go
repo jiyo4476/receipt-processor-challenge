@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -15,13 +14,12 @@ import (
 func getPort() string {
 	value, exists := os.LookupEnv("PORT")
 	if !exists {
-		fmt.Printf("Environment Variable PORT not defined, using default port 8080")
+		log.Println("Environment Variable PORT not defined, using default port 8080")
 		return "8080"
 	} else {
 		port, err := strconv.Atoi(value)
 		if err != nil || port < 0 || port > 65535 {
-			fmt.Printf("%q is not a valid port number, using default.", value)
-			//value = "8080"
+			log.Printf("%q is not a valid port number, using default.", value)
 			return "8080"
 		} else {
 			return value
@@ -37,9 +35,7 @@ func main() {
 	}
 
 	cur_router := router.SetUpRouter()
-
 	port := getPort()
-
 	server := &http.Server{
 		Addr:    ":" + port,
 		Handler: cur_router,
