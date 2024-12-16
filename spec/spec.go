@@ -2,8 +2,9 @@ package spec
 
 import (
 	"fmt"
-	"log"
 	"os"
+
+	"log"
 
 	"github.com/pb33f/libopenapi"
 	v3 "github.com/pb33f/libopenapi/datamodel/high/v3"
@@ -27,7 +28,6 @@ func loadSpec(specFile string) (*libopenapi.DocumentModel[v3.Document], error) {
 		for i := range errors {
 			log.Printf("error: %e\n", errors[i])
 		}
-		log.Printf("cannot create openApi v3 model from document: %d errors reported", len(errors))
 		return nil, fmt.Errorf("cannot create openApi v3 model from document: %d errors reported", len(errors))
 	}
 

@@ -1,28 +1,29 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Receipt_id struct {
+type receipt_id struct {
 	ID string `uri:"id" binding:"required,uuid"`
 }
 
 func GetReceiptsPoints(c *gin.Context) {
-	var receipt_id Receipt_id
-	if err := c.ShouldBindUri(&receipt_id); err != nil {
-		log.Printf("Error binding URL: %v", err)
-		c.JSON(http.StatusNotFound, gin.H{"code": "error", "message": err.Error()})
+	var receiptId receipt_id
+	if err := c.ShouldBindUri(&receiptId); err != nil {
+		log.Infof("Error binding id: %v", err)
+		c.JSON(http.StatusNotFound, gin.H{"code": "error", "message": "No receipt found for that id"})
 		return
 	}
 
 	id := c.Param("id")
 	receipt, ok := memory_cache[id]
 	if !ok {
-		log.Printf("No receipt found for id: %s", id)
+		log.Infof("No receipt found for id: %s", id)
 		c.JSON(http.StatusNotFound, gin.H{"code": "error", "message": "No receipt found for that id"})
 	}
 

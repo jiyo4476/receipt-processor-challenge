@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jiyo4476/receipt-processor-challenge/models"
 
@@ -14,7 +15,7 @@ import (
 func ProcessReceipt(c *gin.Context) {
 	var receipt models.Receipt
 	if err := c.ShouldBindJSON(&receipt); err != nil {
-		log.Printf("Error binding JSON: %v", err) // Log the error
+		log.Infof("Error binding JSON: %v", err) // Log the error
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Validation Error",
 			"message": err.Error(),
@@ -23,7 +24,7 @@ func ProcessReceipt(c *gin.Context) {
 	}
 	// Validates the item total and the receipt total
 	if err := receipt.ValidateTotal(); err != nil {
-		log.Printf("Mismatching Receipt and Item Total: %v", err) // Log the error
+		log.Infof("Mismatching Receipt and Item Total: %v", err) // Log the error
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Validation Error",
 			"message": "The receipt total does not match the sum of the item totals",

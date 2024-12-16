@@ -10,3 +10,8 @@ func TestSetupRouter(t *testing.T) {
 	test_router := SetUpRouter()
 	assert.NotNil(t, test_router, "Router should not be nil")
 }
+
+func TestSetupLogger(t *testing.T) {
+	test_logger := SetUpRouter()
+	assert.NotNil(t, test_logger, "Router should not be nil")
+}

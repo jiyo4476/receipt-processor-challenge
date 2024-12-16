@@ -17,9 +17,10 @@ type Receipt struct {
 	Total        string `json:"total" binding:"required,min=4,correctCashValue"`
 }
 
-var oddRegex = regexp.MustCompile(`\d*[13579]$`)
-var roundAmountRegex = regexp.MustCompile(`\d+\.00$`)
-var multipleOf25Regex = regexp.MustCompile(`\d+\.(00|25|50|75)$`)
+var oddRegex = regexp.MustCompile(`^\d{4}-\d{2}-\d[13579]$`)
+var roundAmountRegex = regexp.MustCompile(`^\d+\.00$`)
+var multipleOf25Regex = regexp.MustCompile(`^\d+\.(00|25|50|75)$`)
+var timeOfPurchaseRegex = regexp.MustCompile(`^1[4,5]:[0-5][0-9]$`)
 
 func (r Receipt) ValidateTotal() error {
 	total, err := strconv.ParseFloat(r.Total, 64)
@@ -109,8 +110,7 @@ func getPointsForOddDate(date string) int64 {
 }
 
 func getPointsForTimeOfPurchase(purchaseTime string) int64 {
-	receiptHour := purchaseTime[:2]
-	if receiptHour == "14" || receiptHour == "15" {
+	if matched := timeOfPurchaseRegex.MatchString(purchaseTime); matched {
 		return 10
 	}
 	return 0

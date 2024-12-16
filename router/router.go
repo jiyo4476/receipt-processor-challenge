@@ -1,36 +1,27 @@
 package router
 
 import (
-	"fmt"
-	"time"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/jiyo4476/receipt-processor-challenge/handlers"
 	"github.com/jiyo4476/receipt-processor-challenge/models"
+	"github.com/sirupsen/logrus"
+	ginlogrus "github.com/toorop/gin-logrus"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 )
 
+func setupLogger() *logrus.Logger {
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.TextFormatter{ForceColors: true})
+	return logger
+}
+
 func SetUpRouter() *gin.Engine {
 	//router := gin.Default()
+	log := setupLogger()
 	router := gin.New()
-	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
-		// Custom format
-		return fmt.Sprintf("[%s] \"%s%s\033[0m %s %s %s%d\033[0m %s \"%s\" %s\"\n",
-			param.TimeStamp.Format(time.RFC1123),
-			param.MethodColor(),
-			param.Method,
-			param.Path,
-			param.Request.Proto,
-			param.StatusCodeColor(),
-			param.StatusCode,
-			param.Latency,
-			param.Request.UserAgent(),
-			param.ErrorMessage,
-		)
-	}))
-	router.Use(gin.Recovery())
+	router.Use(ginlogrus.Logger(log), gin.Recovery())
 
 	// Register custom validation functions for the test router
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {

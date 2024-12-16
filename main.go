@@ -1,11 +1,12 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jiyo4476/receipt-processor-challenge/router"
 	"github.com/jiyo4476/receipt-processor-challenge/spec"
@@ -14,12 +15,12 @@ import (
 func getPort() string {
 	value, exists := os.LookupEnv("PORT")
 	if !exists {
-		log.Println("Environment Variable PORT not defined, using default port 8080")
+		log.Info("Environment Variable PORT not defined, using default port 8080")
 		return "8080"
 	} else {
 		port, err := strconv.Atoi(value)
 		if err != nil || port < 0 || port > 65535 {
-			log.Printf("%q is not a valid port number, using default.", value)
+			log.Warningf("%q is not a valid port number, using default.", value)
 			return "8080"
 		} else {
 			return value
