@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"math"
 	"regexp"
 	"strconv"
@@ -21,28 +20,6 @@ var oddRegex = regexp.MustCompile(`^\d{4}-\d{2}-\d[13579]$`)
 var roundAmountRegex = regexp.MustCompile(`^\d+\.00$`)
 var multipleOf25Regex = regexp.MustCompile(`^\d+\.(00|25|50|75)$`)
 var timeOfPurchaseRegex = regexp.MustCompile(`^1[4,5]:[0-5][0-9]$`)
-
-func (r Receipt) ValidateTotal() error {
-	total, err := strconv.ParseFloat(r.Total, 64)
-	if err != nil {
-		return fmt.Errorf("invalid total: %w", err)
-	}
-
-	itemsTotal := 0.0
-	for _, item := range r.Items {
-		itemPrice, err := strconv.ParseFloat(item.Price, 64)
-		if err != nil {
-			return fmt.Errorf("invalid item price: %w", err)
-		}
-		itemsTotal += itemPrice
-	}
-
-	if fmt.Sprintf("%.2f", itemsTotal) != fmt.Sprintf("%.2f", total) {
-		return fmt.Errorf("sum of item prices %.2f does not equal total %.2f", itemsTotal, total)
-	}
-
-	return nil
-}
 
 func (r Receipt) Points() (int64, error) {
 	points := int64(0)

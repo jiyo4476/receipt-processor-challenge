@@ -13,5 +13,5 @@ func TestSetupRouter(t *testing.T) {
 
 func TestSetupLogger(t *testing.T) {
 	test_logger := SetUpRouter()
-	assert.NotNil(t, test_logger, "Router should not be nil")
+	assert.NotNil(t, test_logger, "Logger should not be nil")
 }

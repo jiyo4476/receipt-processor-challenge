@@ -3,29 +3,10 @@ package main
 import (
 	"testing"
 
-	"github.com/go-playground/assert/v2"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestGetPortValid(t *testing.T) {
-	t.Setenv("PORT", "80")
-	port := getPort()
-	assert.Equal(t, "80", port)
-}
-
-func TestGetPortInvalid_Letter(t *testing.T) {
-	t.Setenv("PORT", "80a")
-	port := getPort()
-	assert.Equal(t, "8080", port)
-}
-
-func TestGetPortInvalid_Negitive(t *testing.T) {
-	t.Setenv("PORT", "-1")
-	port := getPort()
-	assert.Equal(t, "8080", port)
-}
-
-func TestGetPortInvalid_OutOfBounds(t *testing.T) {
-	t.Setenv("PORT", "65536")
-	port := getPort()
-	assert.Equal(t, "8080", port)
+func TestSetupLogger(t *testing.T) {
+	test_logger := setUpLogger()
+	assert.NotNil(t, test_logger, "Logger should not be nil")
 }

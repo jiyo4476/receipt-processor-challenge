@@ -154,6 +154,20 @@ func tryValidateCorrectDate(t *testing.T, input string, isValid bool) {
 	assert.Error(t, err)
 }
 
+func TestValidateCorrectDateInvalid(t *testing.T) {
+	validate := validator.New()
+	validate.RegisterValidation("correctDate", CorrectDate)
+
+	type TestStruct struct {
+		PurchaseDate int `validate:"required,len=10,correctDate" time_format:"2022-01-01"`
+	}
+
+	valid := TestStruct{PurchaseDate: 10}
+
+	err := validate.Struct(valid)
+	assert.Error(t, err)
+}
+
 func TestCorrectDateInvalid_Type(t *testing.T) {
 	validate := validator.New()
 	validate.RegisterValidation("correctDate", CorrectDate)
@@ -186,12 +200,26 @@ func TestCorrectDateInvalid_SectionLen(t *testing.T) {
 	tryValidateCorrectDate(t, "2024-01-011", false)
 }
 
+func TestValidateCorrectTime_InvalidType(t *testing.T) {
+	validate := validator.New()
+	validate.RegisterValidation("correctTime", CorrectTime)
+
+	type TestStruct struct {
+		PurchaseTime int64 `validate:"required,correctTime,len=5" time_format:"13:01"`
+	}
+
+	valid := TestStruct{PurchaseTime: int64(123)}
+
+	err := validate.Struct(valid)
+	assert.Error(t, err)
+}
+
 func tryValidateCorrectTime(t *testing.T, input string, isValid bool) {
 	validate := validator.New()
 	validate.RegisterValidation("correctTime", CorrectTime)
 
 	type TestStruct struct {
-		PurchaseTime string `validate:"required,len=5,correctTime" time_format:"2022-01-01"`
+		PurchaseTime string `validate:"required,correctTime,len=5" time_format:"13:01"`
 	}
 
 	valid := TestStruct{PurchaseTime: input}
@@ -201,20 +229,6 @@ func tryValidateCorrectTime(t *testing.T, input string, isValid bool) {
 		assert.NoError(t, err)
 		return
 	}
-	assert.Error(t, err)
-}
-
-func TestCorrectTimeInvalid_Type(t *testing.T) {
-	validate := validator.New()
-	validate.RegisterValidation("correctTime", CorrectTime)
-
-	type TestStruct struct {
-		PurchaseTime int `validate:"required,len=5,correctTime" time_format:"2022-01-01"`
-	}
-
-	valid := TestStruct{PurchaseTime: 1234}
-
-	err := validate.Struct(valid)
 	assert.Error(t, err)
 }
 

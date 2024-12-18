@@ -22,15 +22,6 @@ func ProcessReceipt(c *gin.Context) {
 		})
 		return
 	}
-	// Validates the item total and the receipt total
-	if err := receipt.ValidateTotal(); err != nil {
-		log.Infof("Mismatching Receipt and Item Total: %v", err) // Log the error
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   "Validation Error",
-			"message": "The receipt total does not match the sum of the item totals",
-		})
-		return
-	}
 
 	var id = uuid.New().String()
 	memory_cache[id] = receipt

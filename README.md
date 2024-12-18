@@ -12,7 +12,7 @@ PORT: Port number used for the server if Environment variable is not set will us
 example:
 
 ```Shell
-export PORT=8080
+export receipt_processor_PORT=8080
 ```
 
 To Set Production Mode:
