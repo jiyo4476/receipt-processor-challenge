@@ -30,6 +30,7 @@ go get .
 ```
 
 ### Run the Server
+
 To start the api server without building the project run following command in the project's root directory.
 
 Command:
@@ -41,6 +42,7 @@ go run ./
 Will start the server on port 8080 by default if no PORT was defined in Environment
 
 ### Build and start
+
 To build and run the api server run the following command in the project's root directory.
 
 Command:
@@ -51,6 +53,7 @@ go build ./
 ```
 
 ## Manually Testing the Server
+
 To test the api server run following command in the project's root directory.
 
 Command:

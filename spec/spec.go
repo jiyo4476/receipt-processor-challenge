@@ -8,6 +8,7 @@ import (
 
 	"github.com/pb33f/libopenapi"
 	v3 "github.com/pb33f/libopenapi/datamodel/high/v3"
+	"go.uber.org/zap"
 )
 
 func loadSpec(specFile string) (*libopenapi.DocumentModel[v3.Document], error) {
@@ -37,9 +38,9 @@ func loadSpec(specFile string) (*libopenapi.DocumentModel[v3.Document], error) {
 func PrintSpec(specFile string) error {
 	spec, err := loadSpec(specFile)
 	if err != nil {
-		log.Printf("Error loading spec: %v", err) // Log the error
+		zap.L().Info(fmt.Sprintf("Error loading spec: %v", err))
 		return err
 	}
-	fmt.Printf("%s %s - %s\n\n", spec.Model.Info.Title, spec.Model.Info.Version, spec.Model.Info.Description)
+	fmt.Printf("\n%s %s - %s\n\n", spec.Model.Info.Title, spec.Model.Info.Version, spec.Model.Info.Description)
 	return nil
 }
