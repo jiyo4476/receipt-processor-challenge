@@ -1,8 +1,10 @@
 package router
 
 import (
+	"github.com/gin-contrib/requestid"
 	"github.com/go-playground/validator/v10"
 	"github.com/jiyo4476/receipt-processor-challenge/handlers"
+	"github.com/jiyo4476/receipt-processor-challenge/middleware"
 	"github.com/jiyo4476/receipt-processor-challenge/models"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +24,11 @@ func SetUpRouter() *gin.Engine {
 		v.RegisterValidation("correctTime", models.CorrectTime)
 	}
 
-	router.POST("/receipts/process", handlers.ProcessReceipt)
-	router.GET("/receipts/:id/points", handlers.GetReceiptsPoints)
+	router.POST("/receipts/process", handlers.ProcessReceipt, middleware.ProcessReceiptLogger())
+	router.GET("/receipts/:id/points", handlers.GetReceiptsPoints, middleware.ReceiptPointsLogger())
+
+	// Middleware
+	router.Use(requestid.New())
+	router.Use(middleware.RateLimiter())
 	return router
 }
