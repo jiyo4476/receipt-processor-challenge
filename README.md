@@ -50,7 +50,7 @@ go build ./
 ./receipt_processor_challenge.exe
 ```
 
-## Testing the Server
+## Manually Testing the Server
 To test the api server run following command in the project's root directory.
 
 Command:
